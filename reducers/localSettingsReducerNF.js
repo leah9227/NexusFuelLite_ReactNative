@@ -22,7 +22,7 @@ const INIT_STATE = {
   idCard: 0,
   extraProcess: '',
   isCardAutorized: false,
-  externalCardSystemList: {}
+  externalCardSystemList: {"ExternalCardSystem":[{"ValidationType": [""], "Description":[""]}]},
 };
 
 const localSettingsNF = (state = fromJS(INIT_STATE), action) => {
@@ -42,6 +42,7 @@ const localSettingsNF = (state = fromJS(INIT_STATE), action) => {
         selectedPump: action.payload.pumpCount,
         error: false,
         message: '',
+        externalCardSystemList: {"ExternalCardSystem":[{"ValidationType": [""], "Description":[""]}]}
       });
     case 'SET_SELECTED_PUMP':
       return state.merge({
