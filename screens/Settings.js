@@ -20,7 +20,9 @@ class Settings extends React.Component {
     super(props);
     this.state = {
       stationNumber: this.props.localSettingsNF.stationNumber,
-      URL_Service: this.props.localSettingsNF.URL_Service,
+      URL_Service_CardSystem: this.props.localSettingsNF.URL_Service_CardSystem,
+      URL_Service_Fleets: this.props.localSettingsNF.URL_Service_Fleets,
+      URL_Service_Mobile: this.props.localSettingsNF.URL_Service_Mobile,
       taxPercentage: this.props.localSettingsNF.taxPercentage,
       pumpCount: this.props.localSettingsNF.pumpCount,
     }
@@ -42,7 +44,7 @@ class Settings extends React.Component {
   }
 
   handleSaveSettingsClick(){
-    this.props.setSettings(this.state.stationNumber, this.state.URL_Service, this.state.taxPercentage, this.state.pumpCount);
+    this.props.setSettings(this.state.stationNumber, this.state.URL_Service_CardSystem, this.state.URL_Service_Fleets, this.state.URL_Service_Mobile, this.state.taxPercentage, this.state.pumpCount);
     this.refs.toast.show('Cambios aplicados.');
   }
 
@@ -59,9 +61,21 @@ class Settings extends React.Component {
             </View>
 
             <View style={ styles.inputContainer }>
-              <Text style={ styles.inputTitle }>IP:PortNumber</Text>
-              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service: text })}}
-              placeholder='URL'>{this.state.URL_Service}</TextInput>
+              <Text style={ styles.inputTitle }>CardSystem URL [IP:PortNumber]</Text>
+              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_CardSystem: text })}}
+              placeholder='CardSystem URL [IP:PortNumber]'>{this.state.URL_Service_CardSystem}</TextInput>
+            </View>
+
+            <View style={ styles.inputContainer }>
+              <Text style={ styles.inputTitle }>Flotillas URL [IP:PortNumber]</Text>
+              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_Fleets: text })}}
+              placeholder='Flotillas URL [IP:PortNumber]'>{this.state.URL_Service_Fleets}</TextInput>
+            </View>
+
+            <View style={ styles.inputContainer }>
+              <Text style={ styles.inputTitle }>Mobile URL [IP:PortNumber]</Text>
+              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_Mobile: text })}}
+              placeholder='Mobile URL [IP:PortNumber]'>{this.state.URL_Service_Mobile}</TextInput>
             </View>
 
             <View style={styles.inputContainer}>
@@ -105,12 +119,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
   inputContainer: {
-    flex: 1,
+    // flex: 1,
+    marginTop: '5%',
     width: '95%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -129,7 +144,7 @@ const styles = StyleSheet.create({
     color: Theme.fontColor,
   },
   cardContent: {
-    flex: 7,
+    // flex: 7,
     justifyContent: 'center',
     alignItems: 'center',
     width: '90%',
@@ -142,17 +157,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
   },
   emptySpace: {
-    flex: 4,
+    // flex: 4,
     width: '100%',
   },
   buttonContainer: {
-    flex: 1,
+    // flex: 1,
     width: '90%',
     justifyContent: 'center',
     marginBottom: '5%',
   },
   buttonStyle: {
-    flex: 1,
+    // flex: 1,
     height: '100%',
     width: '100%',
     color: Theme.mainColor,

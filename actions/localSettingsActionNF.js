@@ -5,6 +5,7 @@ import {
   OAUTH_CLIENT_ID,
   OAUTH_CLIENT_SECRECT,
   VALIDATE_CARD,
+  CARD_SYSTEM_LIST,
 } from '../config/urls';
 
 export function initSettings() {
@@ -19,10 +20,10 @@ export function getSettings() {
   };
 }
 
-export function setSettings(stationNumber, URL_Service, taxPercentage, pumpCount) {
+export function setSettings(stationNumber, URL_Service_CardSystem, URL_Service_Fleets, URL_Service_Mobile, taxPercentage, pumpCount) {
   return {
     type: 'SET_SETTINGS',
-    payload: { stationNumber, URL_Service, taxPercentage, pumpCount },
+    payload: { stationNumber, URL_Service_CardSystem, URL_Service_Fleets, URL_Service_Mobile, taxPercentage, pumpCount },
   };
 }
 
@@ -127,10 +128,87 @@ export function cardValidation(pURL, pCardNumber, pPumpNumber, pNIP, pMileage, p
   }
 }
 
+export function getExternalCardSystemList(pURL, pStationNumber) {
+  return (dispatch) => {
+
+  let body =  '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:nex="http://www.nexusfuel.com/">' +
+               '<soapenv:Header/>' +
+               '<soapenv:Body>' +
+                '<nex:ExternalCardSystemsList>' +
+                  '<nex:stationNumber>1</nex:stationNumber>' +
+                  '<nex:isUnaware>true</nex:isUnaware>' +
+                '</nex:ExternalCardSystemsList>' +
+               '</soapenv:Body>' +
+              '</soapenv:Envelope>';
+
+  return fetch(`http://${pURL}/${CARD_SYSTEM_LIST}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/xml;charset=UTF-8',
+      'SOAPAction': 'http://www.nexusfuel.com/ExternalCardSystemsList',
+      Accept: 'application/json',
+    },
+    body: body,
+  })
+    .then((response) => {
+
+      var temp = JSON.stringify(response._bodyInit.replace(/s:/g,''));
+      temp = temp.replace(/a:/g,'');
+      temp = temp.replace(/( xmlns=\\".*?")/g, '');
+      temp = temp.replace(/( xmlna=\\".*?")/g, '');
+      temp = temp.replace(/( xmlni=\\".*?")/g, '');
+      temp = temp.replace(/(".*?)/g, '');
+      temp = temp.replace(/(<?.*[?]>)/g, '');
+      temp = temp.replace(/(xmlnsoap=\\.*?\\)/g, '');
+      temp = temp.replace(/(xmlnxsi=\\.*?\\)/g, '');
+      temp = temp.replace(/(xmlnxsd=\\.*?\\)/g, '');
+      temp = temp.replace(/(  .*?)/g, '');
+      temp = temp.replace(/(soap:.*?)/g, '');
+
+      var parseString = require('react-native-xml2js').parseString;
+
+      parseString(temp, function (err, result){
+        if(err == null){
+          var externalCardSystemList = result.Envelope.Body[0].ExternalCardSystemsListResponse[0].ExternalCardSystemsListResult[0]
+
+          console.log('------------------------------------------------')
+          console.log(`Data parsed: ${JSON.stringify(externalCardSystemList)}`);
+          console.log('------------------------------------------------')
+
+          var Description = externalCardSystemList.ExternalCardSystem[1].Description[0]
+          var ValidationType = externalCardSystemList.ExternalCardSystem[1].ValidationType[0]
+          var StationNumber = externalCardSystemList.ExternalCardSystem[1].StationNumber[0]
+          var Parameters = externalCardSystemList.ExternalCardSystem[1].Parameters[0]
+
+          dispatch(successExternalCardSystemList(externalCardSystemList))
+        }
+        else{
+          console.log('------------------------------------------------')
+          console.log(`Data with error: ${JSON.stringify(temp)}`);
+          console.log('------------------------------------------------')
+          dispatch(error(`Error parsing xml to json: ${err}`));
+        }
+      });
+
+    })
+    .catch((error_msg) => {
+      dispatch(error(`Error: ${error_msg}`));
+    });
+  }
+}
+
+
 export function successValidationCard(pAmountAutorized, pVolumenAutorized, pProductsAutorized, pClasification, pBalance, pIsPrePay, pIdAutorization, pIdClient, pIdentificatorId, pIdCard, pExtraProcess) {
   return {
     type: 'SUCCESS_VALIDATION_CARD',
     payload: { pAmountAutorized, pVolumenAutorized, pProductsAutorized, pClasification, pBalance, pIsPrePay, pIdAutorization, pIdClient, pIdentificatorId, pIdCard, pExtraProcess },
+  };
+}
+
+export function successExternalCardSystemList(pExternalCardSystemList) {
+  return {
+    type: 'SUCCESS_EXTERNAL_CARD_SYSTEM_LIST',
+    payload: { pExternalCardSystemList },
   };
 }
 
@@ -140,38 +218,3 @@ export function error(message) {
     payload: { message },
   };
 }
-
-//
-// export function successValidateVouchers(currentProgress, currentPoints, pendingPoints) {
-//   return {
-//     type: 'SUCCESS_VALIDATE_VOUCHERS',
-//     payload: { currentProgress, currentPoints, pendingPoints },
-//   };
-// }
-//
-//
-// export function validateVouchers() {
-//   return (dispatch, getState) => {
-//     const { auth } = getState();
-//     return fetch(USER_POINTS, {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Accept: 'application/json',
-//         Authorization: `Bearer ${auth.get('accessToken')}`,
-//       },
-//     })
-//       .then(response => response.json())
-//       .then((json) => {
-//         if (json.failed) {
-//           dispatch(error(json.errorMessages[0]));
-//         } else {
-//           dispatch(successValidateVouchers(json.result.currentProgress,
-//             json.result.currentPoints, json.result.pendingPoints));
-//         }
-//       })
-//       .catch(() => {
-//         dispatch(error('Error inesperado al obtener los puntos.'));
-//       });
-//   };
-// }

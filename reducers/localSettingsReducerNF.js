@@ -2,7 +2,9 @@ import { fromJS } from 'immutable';
 
 const INIT_STATE = {
   stationNumber: 0,
-  URL_Service: '0.0.0.0:0',
+  URL_Service_CardSystem: '0.0.0.0:0',
+  URL_Service_Fleets: '0.0.0.0:0',
+  URL_Service_Mobile: '0.0.0.0:0',
   taxPercentage: '0',
   pumpCount: '0',
   selectedPump: 0,
@@ -20,6 +22,7 @@ const INIT_STATE = {
   idCard: 0,
   extraProcess: '',
   isCardAutorized: false,
+  externalCardSystemList: {}
 };
 
 const localSettingsNF = (state = fromJS(INIT_STATE), action) => {
@@ -31,7 +34,9 @@ const localSettingsNF = (state = fromJS(INIT_STATE), action) => {
     case 'SET_SETTINGS':
       return state.merge({
         stationNumber: action.payload.stationNumber,
-        URL_Service: action.payload.URL_Service,
+        URL_Service_CardSystem: action.payload.URL_Service_CardSystem,
+        URL_Service_Fleets: action.payload.URL_Service_Fleets,
+        URL_Service_Mobile: action.payload.URL_Service_Mobile,
         taxPercentage: action.payload.taxPercentage,
         pumpCount: action.payload.pumpCount,
         selectedPump: action.payload.pumpCount,
@@ -61,6 +66,10 @@ const localSettingsNF = (state = fromJS(INIT_STATE), action) => {
         isCardAutorized: true,
         error: false,
         message: ''
+      });
+    case 'SUCCESS_EXTERNAL_CARD_SYSTEM_LIST':
+      return state.merge({
+        externalCardSystemList: action.payload.pExternalCardSystemList
       });
     case 'ERROR':
     return state.merge({
