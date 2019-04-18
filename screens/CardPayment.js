@@ -9,6 +9,8 @@ import  {
   ScrollView,
   KeyboardAvoidingView,
   Alert,
+  FlatList,
+  Dimensions
  } from 'react-native';
 import Theme from '../config/theme';
 import Toast, {DURATION} from 'react-native-easy-toast-fixed';
@@ -28,9 +30,13 @@ export default class CardPayment extends React.Component{
       mileage: '134413',
       plates: 'EDO MEX',
       selectedFleet: '',
+      selectedFleetIndex: 0,
       validationString: '1756191232202351582449515781185172249199185',
       amount: '0',
-      key: 'e*7KwkpO9)(@2n_xqA21*&n#0_=JFDi@__4H0r4-51-35t4_eS_14-P3rr0N@&cX<2.<@)^%!|Gd|]sa{D3L@Bd}#DsliuH1)9'
+      key: 'e*7KwkpO9)(@2n_xqA21*&n#0_=JFDi@__4H0r4-51-35t4_eS_14-P3rr0N@&cX<2.<@)^%!|Gd|]sa{D3L@Bd}#DsliuH1)9',
+      fleetsListParameters: [{key: 'a', title: 'title a'}, {key: 'b', title: 'title b'}, {key: 'c', title: 'title c'}, {key: 'd', title: 'title d'}, {key: 'e', title: 'title e'}],
+      heightScreen: 0,
+      widthScreen: 0,
     }
   };
 
@@ -66,6 +72,7 @@ export default class CardPayment extends React.Component{
   handleFleetSelection(itemValue, itemIndex){
     this.setState({
       selectedFleet: itemValue,
+      selectedFleetIndex: itemIndex
     });
   }
 
@@ -78,6 +85,11 @@ export default class CardPayment extends React.Component{
   }
 
   componentDidMount(){
+    this.setState({
+      heightScreen: Dimensions.get('window').height,
+      widthScreen: Dimensions.get('window').width,
+    })
+
     this.props.getExternalCardSystemList(this.props.localSettingsNF.URL_Service_Fleets, this.state.pump)
   }
 
@@ -92,6 +104,33 @@ export default class CardPayment extends React.Component{
     return null;
   }
 
+  getFooterContainerStyle(){
+    return({
+        width: '90%',
+        height: this.state.heightScreen/9,
+        justifyContent: 'center',
+      });
+  }
+
+  getHeaderContainerStyle(){
+    return({
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: this.state.heightScreen/10
+    });
+  }
+
+  getInputContainerRow(){
+    return({
+      flexDirection: 'row',
+      height: this.state.heightScreen/15,
+      width: '95%',
+      alignItems: 'center',
+      justifyContent: 'center',
+    });
+  }
+
   renderContent(){
     let fleetsList = this.props.localSettingsNF.externalCardSystemList.ExternalCardSystem.map( (item) => {
       return <Picker.Item key={item.ValidationType[0]} value={item.ValidationType[0]} label={item.Description[0]} />
@@ -99,22 +138,29 @@ export default class CardPayment extends React.Component{
 
     if(this.state.isFirstStep){
       return(
-        <View style={ styles.container } visible={ false }>
-          <View style={ styles.headerContainer }>
+        <View style={ styles.container }>
+          <View style={ this.getHeaderContainerStyle() }>
             <Text style={ styles.headerTitle }>Informacion de tarjeta</Text>
             <Text style={ styles.errorStyle}>{ this.props.localSettingsNF.message }</Text>
           </View>
 
           <View style={ styles.cardContainer }>
 
-            <View style={ styles.inputContainerRow }>
+            <View style={ this.getInputContainerRow() }>
               <Text style={ styles.pickerTitle }>Flotillero</Text>
               <Picker style={ styles.pickerStyle } selectedValue={this.state.selectedFleet} onValueChange={(itemValue, itemIndex) => {this.handleFleetSelection(itemValue, itemIndex)}}>
                 {fleetsList}
               </Picker>
             </View>
 
-            <TextInputGeneric KeyboardType='numeric' PlaceHolder='hiiiint :P' Title='Test titleeeeeeeee'/>
+            <FlatList
+              style={{flex: 1, width: '95%'}}
+              data={this.props.localSettingsNF.externalCardSystemList.ExternalCardSystem[this.state.selectedFleetIndex].Parameters[0].ServiceParameter}
+              renderItem={
+                ({item}) => <TextInputGeneric KeyboardType='numeric' PlaceHolder={item.Code[0]} Title={item.Code[0]}/>
+              }
+              keyExtractor={(item, index) => index.toString()}
+            />
 
             <View style={styles.inputContainer}>
               <Text style={ styles.inputTitle }>Numero de tarjeta</Text>
@@ -147,8 +193,7 @@ export default class CardPayment extends React.Component{
             </View>
           </View>
 
-          <View style={ styles.footerContainer }>
-
+          <View style={ this.getFooterContainerStyle() }>
             <Button title='VALIDAR' onPress={ () => {this.handleValidationClick()} } containerViewStyle={ styles.buttonStyle }/>
           </View>
         </View>
@@ -182,16 +227,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#FFF',
-  },
-  headerContainer: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: '5%',
   },
   headerTitle: {
     fontSize: 25,
@@ -213,10 +251,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 350,
     width: '90%',
-    marginTop: '5%',
-    marginBottom: '5%',
     elevation: 3,
     shadowColor: '#000000',
     backgroundColor: '#FFF',
@@ -226,11 +261,6 @@ const styles = StyleSheet.create({
   buttonStyle: {
     height: '100%',
     color: Theme.mainColor,
-  },
-  footerContainer: {
-    flex: 4,
-    width: '90%',
-    justifyContent: 'flex-start',
   },
   pickerTitle: {
     flex: 1,
@@ -245,21 +275,7 @@ const styles = StyleSheet.create({
     height: '100%',
     color: Theme.fontColor,
   },
-  shiftContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   inputContainer: {
-    flex: 1,
-    width: '95%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputContainerRow:{
-    flex: 1,
-    flexDirection: 'row',
     width: '95%',
     alignItems: 'center',
     justifyContent: 'center',

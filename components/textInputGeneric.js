@@ -32,7 +32,7 @@ export default TextInputGeneric;
 const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
-    width: '95%',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
