@@ -9,11 +9,14 @@ import {
   Button,
   ScrollView,
   TouchableHighlight,
+  KeyboardAvoidingView,
+  Dimensions,
 }
   from 'react-native';
 import PropTypes from 'prop-types';
 import Theme from '../config/theme';
 import Toast, {DURATION} from 'react-native-easy-toast-fixed';
+import TextInputGeneric from '../components/textInputGeneric'
 
 class Settings extends React.Component {
   constructor(props) {
@@ -25,6 +28,7 @@ class Settings extends React.Component {
       URL_Service_Mobile: this.props.localSettingsNF.URL_Service_Mobile,
       taxPercentage: this.props.localSettingsNF.taxPercentage,
       pumpCount: this.props.localSettingsNF.pumpCount,
+      textTitle: 'empty'
     }
   };
 
@@ -43,66 +47,100 @@ class Settings extends React.Component {
     headerTintColor: '#FFF',
   }
 
+  componentDidMount(){
+    this.setState({
+      heightScreen: Dimensions.get('window').height,
+      widthScreen: Dimensions.get('window').width,
+    });
+  }
+
   handleSaveSettingsClick(){
     this.props.setSettings(this.state.stationNumber, this.state.URL_Service_CardSystem, this.state.URL_Service_Fleets, this.state.URL_Service_Mobile, this.state.taxPercentage, this.state.pumpCount);
     this.refs.toast.show('Cambios aplicados.');
   }
 
+  getHeaderContainerStyle(){
+    return({
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: this.state.heightScreen/25,
+    });
+  }
+
+  getFooterContainerStyle(){
+    return({
+        width: '90%',
+        height: this.state.heightScreen/9,
+        justifyContent: 'center',
+      });
+  }
+
   render(){
     return (
-      <ScrollView contentContainerStyle={{flexGrow:1}}>
-        <View style={styles.container}>
-          <View style={ styles.cardContent }>
+      <KeyboardAvoidingView style={{ flex: 1, }} behavior={'padding'} keyboardVerticalOffset={80}>
+        <ScrollView contentContainerStyle={{flexGrow:1}}>
+          <View style={styles.container}>
 
-            <View style={styles.inputContainer}>
-              <Text style={ styles.inputTitle }>Numero de estacion</Text>
-              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ stationNumber: text })}}
-              placeholder='Estacion'>{this.state.stationNumber}</TextInput>
+            <View style={ this.getHeaderContainerStyle() }>
             </View>
 
-            <View style={ styles.inputContainer }>
-              <Text style={ styles.inputTitle }>CardSystem URL [IP:PortNumber]</Text>
-              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_CardSystem: text })}}
-              placeholder='CardSystem URL [IP:PortNumber]'>{this.state.URL_Service_CardSystem}</TextInput>
+            <View style={ styles.cardContent }>
+              <View style={styles.inputContainer}>
+                <Text style={ styles.inputTitle }>Numero de estacion</Text>
+                <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ stationNumber: text })}}
+                placeholder='Estacion'>{this.state.stationNumber}</TextInput>
+              </View>
+
+              <View style={ styles.inputContainer }>
+                <Text style={ styles.inputTitle }>CardSystem URL [IP:PortNumber]</Text>
+                <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_CardSystem: text })}}
+                placeholder='CardSystem URL [IP:PortNumber]'>{this.state.URL_Service_CardSystem}</TextInput>
+              </View>
+
+              <View style={ styles.inputContainer }>
+                <Text style={ styles.inputTitle }>Flotillas URL [IP:PortNumber]</Text>
+                <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_Fleets: text })}}
+                placeholder='Flotillas URL [IP:PortNumber]'>{this.state.URL_Service_Fleets}</TextInput>
+              </View>
+
+              <View style={ styles.inputContainer }>
+                <Text style={ styles.inputTitle }>Mobile URL [IP:PortNumber]</Text>
+                <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_Mobile: text })}}
+                placeholder='Mobile URL [IP:PortNumber]'>{this.state.URL_Service_Mobile}</TextInput>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={ styles.inputTitle }>Impuesto (en porcentaje)</Text>
+                <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ taxPercentage: text })}}
+                placeholder='Impuesto %'>{this.state.taxPercentage}</TextInput>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={ styles.inputTitle }>Numero de bombas</Text>
+                <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ pumpCount: text })}}
+                placeholder='Numero de bombas' keyboardType='numeric'>{this.state.pumpCount}</TextInput>
+              </View>
+
+              <View style={ styles.inputContainer}>
+                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder1' Title='Test taitooool :P 1' Text={this.state.textTitle}/>
+                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder2' Title='Test taitooool :P 2' Text={this.state.textTitle} OnChangeText={(text) => {this.setState({ textTitle: `${this.state.textTitle}, X${text},`})}}/>
+                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder3' Title='Test taitooool :P 3'/>
+                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder4' Title='Test taitooool :P 4'/>
+                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder5' Title='Test taitooool :P 5'/>
+              </View>
             </View>
 
-            <View style={ styles.inputContainer }>
-              <Text style={ styles.inputTitle }>Flotillas URL [IP:PortNumber]</Text>
-              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_Fleets: text })}}
-              placeholder='Flotillas URL [IP:PortNumber]'>{this.state.URL_Service_Fleets}</TextInput>
+            <View style={ this.getFooterContainerStyle() }>
+              <Button title='SALVAR CAMBIOS' onPress={ () => { this.handleSaveSettingsClick() }} style={ styles.buttonStyle }/>
             </View>
-
-            <View style={ styles.inputContainer }>
-              <Text style={ styles.inputTitle }>Mobile URL [IP:PortNumber]</Text>
-              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ URL_Service_Mobile: text })}}
-              placeholder='Mobile URL [IP:PortNumber]'>{this.state.URL_Service_Mobile}</TextInput>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={ styles.inputTitle }>Impuesto (en porcentaje)</Text>
-              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ taxPercentage: text })}}
-              placeholder='Impuesto %'>{this.state.taxPercentage}</TextInput>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={ styles.inputTitle }>Numero de bombas</Text>
-              <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ pumpCount: text })}}
-              placeholder='Numero de bombas' keyboardType='numeric'>{this.state.pumpCount}</TextInput>
-            </View>
-
           </View>
 
-          <TouchableHighlight  style={ styles.buttonContainer }>
-            <Button title='SALVAR CAMBIOS' onPress={ () => { this.handleSaveSettingsClick() }} style={ styles.buttonStyle }/>
-          </TouchableHighlight >
+          <Toast ref="toast" position='bottom' style={{backgroundColor: Theme.mainColor}}
+          textStyle={{color:'#FFF'}} opacity={0.8} positionValue={180}/>
 
-          <View style={styles.emptySpace}></View>
-        </View>
-
-        <Toast ref="toast" position='bottom' style={{backgroundColor: Theme.mainColor}}
-        textStyle={{color:'#FFF'}} opacity={0.8} positionValue={180}/>
-
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -124,8 +162,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
   },
   inputContainer: {
-    // flex: 1,
-    marginTop: '5%',
     width: '95%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -144,31 +180,23 @@ const styles = StyleSheet.create({
     color: Theme.fontColor,
   },
   cardContent: {
-    // flex: 7,
     justifyContent: 'center',
     alignItems: 'center',
     width: '90%',
-    backgroundColor: 'white',
-    marginTop: '5%',
-    marginBottom: '5%',
     elevation: 3,
     shadowColor: '#000000',
+    backgroundColor: '#FFF',
     shadowRadius: 5,
     shadowOpacity: 0.2,
   },
   emptySpace: {
-    // flex: 4,
     width: '100%',
   },
   buttonContainer: {
-    // flex: 1,
     width: '90%',
     justifyContent: 'center',
-    marginBottom: '5%',
   },
   buttonStyle: {
-    // flex: 1,
-    height: '100%',
     width: '100%',
     color: Theme.mainColor,
   },

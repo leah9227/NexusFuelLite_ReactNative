@@ -20,8 +20,8 @@ class TextInputGeneric extends React.Component {
     return (
       <View style={styles.inputContainer}>
         <Text style={ styles.inputTitle }>{this.props.Title}</Text>
-        <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={(text) => { this.setState({ textInput: text })}}
-          placeholder={this.props.PlaceHolder} keyboardType={this.props.KeyboardType}>{this.state.textInput}</TextInput>
+        <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={ this.props.OnChangeText }
+          placeholder={this.props.PlaceHolder} keyboardType={this.props.KeyboardType}>{this.props.Text}</TextInput>
       </View>
     );
   }
