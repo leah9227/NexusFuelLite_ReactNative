@@ -37,6 +37,8 @@ export function setSelectedPump(selectedPump) {
 export function cardValidation(pURL, pCardNumber, pPumpNumber, pNIP, pMileage, pPlates, pStationNumber, pValidationString) {
   return (dispatch) => {
 
+  dispatch(startServiceCall(true));
+
   let body =  '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">' +
                 '<soap:Body>' +
                   '<ValidaTarjeta xmlns="http://tempuri.org/">' +
@@ -131,6 +133,8 @@ export function cardValidation(pURL, pCardNumber, pPumpNumber, pNIP, pMileage, p
 export function getExternalCardSystemList(pURL, pStationNumber) {
   return (dispatch) => {
 
+  dispatch(startServiceCall(true));
+
   let body =  '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:nex="http://www.nexusfuel.com/">' +
                '<soapenv:Header/>' +
                '<soapenv:Body>' +
@@ -149,7 +153,7 @@ export function getExternalCardSystemList(pURL, pStationNumber) {
       Accept: 'application/json',
     },
     body: body,
-  })
+    })
     .then((response) => {
 
       var temp = JSON.stringify(response._bodyInit.replace(/s:/g,''));
@@ -197,7 +201,6 @@ export function getExternalCardSystemList(pURL, pStationNumber) {
   }
 }
 
-
 export function successValidationCard(pAmountAutorized, pVolumenAutorized, pProductsAutorized, pClasification, pBalance, pIsPrePay, pIdAutorization, pIdClient, pIdentificatorId, pIdCard, pExtraProcess) {
   return {
     type: 'SUCCESS_VALIDATION_CARD',
@@ -217,4 +220,11 @@ export function error(message) {
     type: 'ERROR',
     payload: { message },
   };
+}
+
+export function startServiceCall(status) {
+  return {
+    type: 'START_SERVICE_CALL',
+    payload: { status },
+  }
 }

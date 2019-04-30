@@ -8,6 +8,7 @@ const theme = {
   // brandLogo,
   // loginLogo,
   mainColor: '#31A2FF',
+  mainColorRGBA: 'rgba(66, 165, 245, 0.9)',
   secondaryColor: '#2487AD',
   default: '#696969',
   tabBar: '#E0E0E0',

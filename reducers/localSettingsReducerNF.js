@@ -23,6 +23,7 @@ const INIT_STATE = {
   extraProcess: '',
   isCardAutorized: false,
   externalCardSystemList: {"ExternalCardSystem":[{"ValidationType": [""], "Description":[""], "Parameters":[""]}]},
+  isLoading: false,
 };
 
 const localSettingsNF = (state = fromJS(INIT_STATE), action) => {
@@ -51,6 +52,10 @@ const localSettingsNF = (state = fromJS(INIT_STATE), action) => {
         isCardAutorized: false,
         message: '',
       });
+    case 'START_SERVICE_CALL':
+      return state.merge({
+        isLoading: action.payload.status,
+      });
     case 'SUCCESS_VALIDATION_CARD':
       return state.merge({
         amountAutorized: action.payload.pAmountAutorized,
@@ -66,17 +71,22 @@ const localSettingsNF = (state = fromJS(INIT_STATE), action) => {
         extraProcess: action.payload.pExtraProcess,
         isCardAutorized: true,
         error: false,
-        message: ''
+        message: '',
+        isLoading: false
       });
     case 'SUCCESS_EXTERNAL_CARD_SYSTEM_LIST':
       return state.merge({
-        externalCardSystemList: action.payload.pExternalCardSystemList
+        externalCardSystemList: action.payload.pExternalCardSystemList,
+        error: false,
+        message: '',
+        isLoading: false
       });
     case 'ERROR':
     return state.merge({
       error: true,
       isCardAutorized: false,
       message: action.payload.message,
+      isLoading: false
     });
     default:
       return state;

@@ -8,8 +8,6 @@ import {
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { withNavigation } from 'react-navigation';
-// import ProfileIcon from './profile';
-// import CardIcon from './card';
 import Theme from '../config/theme';
 
 class Header extends React.Component {

@@ -10,7 +10,9 @@ import  {
   KeyboardAvoidingView,
   Alert,
   FlatList,
-  Dimensions
+  Dimensions,
+  ActivityIndicator,
+  Image
  } from 'react-native';
 import Theme from '../config/theme';
 import Toast, {DURATION} from 'react-native-easy-toast-fixed';
@@ -76,6 +78,25 @@ export default class CardPayment extends React.Component{
     });
   }
 
+  loadingContent(){
+    if(this.props.localSettingsNF.isLoading){
+      return(
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', backgroundColor: Theme.mainColorRGBA}}>
+          <Image
+              source={Theme.headerLogo}
+              style={styles.loadingLogo}
+          />
+          <ActivityIndicator size='large' color='white' animating={ true }/>
+        </View>
+      )
+    }
+    else{
+      return(
+        this.renderContent()
+      )
+    }
+  }
+
   componentDidUpdate(prevProps, prevState){
     if(this.state.isFirstStep !== prevState.isFirstStep){
       if(!this.state.isFirstStep){
@@ -98,7 +119,7 @@ export default class CardPayment extends React.Component{
       // alert('Autorizacion correcta. Navegar a siguiente pantalla.');
       // props.navigation.navigate('HomeScreen');
       return{
-        isFirstStep: false
+        isFirstStep: false,
       };
     }
     return null;
@@ -213,7 +234,7 @@ export default class CardPayment extends React.Component{
     return (
       <KeyboardAvoidingView style={{ flex: 1, }} behavior={'padding'} keyboardVerticalOffset={80}>
         <ScrollView contentContainerStyle={{flexGrow:1}}>
-          { this.renderContent() }
+          { this.loadingContent() }
 
           <Toast ref="toast" position='bottom' style={{backgroundColor: Theme.mainColor}}
           textStyle={{color:'#FFF'}} opacity={0.8} positionValue={180}/>
@@ -289,5 +310,10 @@ const styles = StyleSheet.create({
   errorStyle: {
     color: 'red',
     fontWeight: 'bold',
-  }
+  },
+  loadingLogo: {
+    resizeMode: 'contain',
+    height: 30,
+    marginBottom: 15
+  },
 })

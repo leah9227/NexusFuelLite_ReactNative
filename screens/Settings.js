@@ -125,9 +125,6 @@ class Settings extends React.Component {
               <View style={ styles.inputContainer}>
                 <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder1' Title='Test taitooool :P 1' Text={this.state.textTitle}/>
                 <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder2' Title='Test taitooool :P 2' Text={this.state.textTitle} OnChangeText={(text) => {this.setState({ textTitle: `${this.state.textTitle}, X${text},`})}}/>
-                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder3' Title='Test taitooool :P 3'/>
-                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder4' Title='Test taitooool :P 4'/>
-                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder5' Title='Test taitooool :P 5'/>
               </View>
             </View>
 
