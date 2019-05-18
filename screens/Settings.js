@@ -11,12 +11,13 @@ import {
   TouchableHighlight,
   KeyboardAvoidingView,
   Dimensions,
+  ToastAndroid
 }
   from 'react-native';
 import PropTypes from 'prop-types';
 import Theme from '../config/theme';
-import Toast, {DURATION} from 'react-native-easy-toast-fixed';
-import TextInputGeneric from '../components/textInputGeneric'
+import TextInputGeneric from '../components/textInputGeneric';
+import SnackBar from 'react-native-snackbar-component';
 
 class Settings extends React.Component {
   constructor(props) {
@@ -28,7 +29,9 @@ class Settings extends React.Component {
       URL_Service_Mobile: this.props.localSettingsNF.URL_Service_Mobile,
       taxPercentage: this.props.localSettingsNF.taxPercentage,
       pumpCount: this.props.localSettingsNF.pumpCount,
-      textTitle: 'empty'
+      textTitle: 'empty',
+      snackBarVisibility: false,
+      autoHidingTime: 3000,
     }
   };
 
@@ -54,9 +57,9 @@ class Settings extends React.Component {
     });
   }
 
-  handleSaveSettingsClick(){
+  handleSaveSettingsClick() {
+    this.setState({ snackBarVisibility: true });
     this.props.setSettings(this.state.stationNumber, this.state.URL_Service_CardSystem, this.state.URL_Service_Fleets, this.state.URL_Service_Mobile, this.state.taxPercentage, this.state.pumpCount);
-    this.refs.toast.show('Cambios aplicados.');
   }
 
   getHeaderContainerStyle(){
@@ -123,18 +126,22 @@ class Settings extends React.Component {
               </View>
 
               <View style={ styles.inputContainer}>
-                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder1' Title='Test taitooool :P 1' Text={this.state.textTitle}/>
-                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder2' Title='Test taitooool :P 2' Text={this.state.textTitle} OnChangeText={(text) => {this.setState({ textTitle: `${this.state.textTitle}, X${text},`})}}/>
+                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder1'
+                Title='Test taitooool :P 1' Text={this.state.textTitle}/>
+                <TextInputGeneric KeyboardType='numeric' PlaceHolder='Test placeholder2'
+                Title='Test taitooool :P 2' Text={this.state.textTitle} OnChangeText={(text) => {this.setState({ textTitle: text})}}/>
               </View>
             </View>
 
             <View style={ this.getFooterContainerStyle() }>
-              <Button title='SALVAR CAMBIOS' onPress={ () => { this.handleSaveSettingsClick() }} style={ styles.buttonStyle }/>
+              <Button title='SALVAR CAMBIOS' onPress={ () =>  { this.handleSaveSettingsClick() } }
+            style={ styles.buttonStyle }/>
             </View>
           </View>
 
-          <Toast ref="toast" position='bottom' style={{backgroundColor: Theme.mainColor}}
-          textStyle={{color:'#FFF'}} opacity={0.8} positionValue={180}/>
+          <SnackBar visible={ this.state.snackBarVisibility } textMessage='Cambios aplicados correctamente.'
+            actionHandler={ () => { console.log('snackbar button clicked!') }}
+            autoHidingTime={ this.state.autoHidingTime }/>
 
         </ScrollView>
       </KeyboardAvoidingView>
@@ -185,13 +192,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     shadowRadius: 5,
     shadowOpacity: 0.2,
-  },
-  emptySpace: {
-    width: '100%',
-  },
-  buttonContainer: {
-    width: '90%',
-    justifyContent: 'center',
   },
   buttonStyle: {
     width: '100%',

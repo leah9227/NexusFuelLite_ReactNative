@@ -11,16 +11,14 @@ import Theme from '../config/theme'
 class TextInputGeneric extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      textInput: ''
-    }
+    this.state = {}
   };
 
   render(){
     return (
       <View style={styles.inputContainer}>
         <Text style={ styles.inputTitle }>{this.props.Title}</Text>
-        <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={ this.props.OnChangeText }
+        <TextInput style={ styles.inputField } underlineColorAndroid={Theme.mainColor} onChangeText={ (text) => {  this.props.OnChangeText(text); }}
           placeholder={this.props.PlaceHolder} keyboardType={this.props.KeyboardType}>{this.props.Text}</TextInput>
       </View>
     );

@@ -8,6 +8,8 @@ import {
   CARD_SYSTEM_LIST,
 } from '../config/urls';
 
+const EMPTY_RESPONSE_SERVICE = 'No se obtuvo respuesta del servicio.'
+
 export function initSettings() {
   return {
     type: 'INIT_SETTINGS',
@@ -156,6 +158,10 @@ export function getExternalCardSystemList(pURL, pStationNumber) {
     })
     .then((response) => {
 
+      console.log('------------------------------------------------')
+      console.log(`Data parsed: ${JSON.stringify(response)}`);
+      console.log('------------------------------------------------')
+
       var temp = JSON.stringify(response._bodyInit.replace(/s:/g,''));
       temp = temp.replace(/a:/g,'');
       temp = temp.replace(/( xmlns=\\".*?")/g, '');
@@ -173,18 +179,22 @@ export function getExternalCardSystemList(pURL, pStationNumber) {
 
       parseString(temp, function (err, result){
         if(err == null){
-          var externalCardSystemList = result.Envelope.Body[0].ExternalCardSystemsListResponse[0].ExternalCardSystemsListResult[0]
+          var externalCardSystemList = result.Envelope.Body[0].ExternalCardSystemsListResponse[0].ExternalCardSystemsListResult[0];
+          console.log('---------------------');
+          console.log(JSON.stringify(result.Envelope.Body[0]));
+          console.log('---------------------');
 
-          console.log('------------------------------------------------')
-          console.log(`Data parsed: ${JSON.stringify(externalCardSystemList)}`);
-          console.log('------------------------------------------------')
+          if(externalCardSystemList == '') {
+            dispatch(error(EMPTY_RESPONSE_SERVICE));
+          }
+          else {
+            var Description = externalCardSystemList.ExternalCardSystem[1].Description[0];
+            var ValidationType = externalCardSystemList.ExternalCardSystem[1].ValidationType[0];
+            var StationNumber = externalCardSystemList.ExternalCardSystem[1].StationNumber[0];
+            var Parameters = externalCardSystemList.ExternalCardSystem[1].Parameters[0];
 
-          var Description = externalCardSystemList.ExternalCardSystem[1].Description[0]
-          var ValidationType = externalCardSystemList.ExternalCardSystem[1].ValidationType[0]
-          var StationNumber = externalCardSystemList.ExternalCardSystem[1].StationNumber[0]
-          var Parameters = externalCardSystemList.ExternalCardSystem[1].Parameters[0]
-
-          dispatch(successExternalCardSystemList(externalCardSystemList))
+            dispatch(successExternalCardSystemList(externalCardSystemList));
+          }
         }
         else{
           console.log('------------------------------------------------')

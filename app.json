@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "NexusFuelLite_ReactNative",
+    "name": "NexusFuel Lite",
     "icon": "./assets/nf_logo.png",
-    "slug": "NexusFuelLite_ReactNative",
+    "slug": "NexusFuelLite",
     "privacy": "public",
     "sdkVersion": "31.0.0",
     "ios": {
-      "bundleIdentifier": "com.ArkusNexus.NexusFuelLite_ReactNative"
+      "bundleIdentifier": "com.ArkusNexus.NexusFuelLite"
     },
     "android": {
-      "package": "com.ArkusNexus.NexusFuelMobile"
+      "package": "com.ArkusNexus.NexusFuelLite"
     },
     "platforms": [
       "ios",

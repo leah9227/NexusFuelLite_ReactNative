@@ -152,6 +152,14 @@ export default class CardPayment extends React.Component{
     });
   }
 
+  handleOnChangeText(index, item, text) {
+    console.log(`Index: ${index} | Code: ${item.Code[0]} | Text:${text}`);
+
+    /* this.setState({
+
+    }); */
+  }
+
   renderContent(){
     let fleetsList = this.props.localSettingsNF.externalCardSystemList.ExternalCardSystem.map( (item) => {
       return <Picker.Item key={item.ValidationType[0]} value={item.ValidationType[0]} label={item.Description[0]} />
@@ -178,7 +186,10 @@ export default class CardPayment extends React.Component{
               style={{flex: 1, width: '95%'}}
               data={this.props.localSettingsNF.externalCardSystemList.ExternalCardSystem[this.state.selectedFleetIndex].Parameters[0].ServiceParameter}
               renderItem={
-                ({item}) => <TextInputGeneric KeyboardType='numeric' PlaceHolder={item.Code[0]} Title={item.Code[0]}/>
+                ({item, index}) => <TextInputGeneric KeyboardType='numeric' PlaceHolder={item.Code[0]}
+                Title={item.Code[0]} Text={item.Value[0]}
+                OnChangeText={(text) => { this.handleOnChangeText(index, item, text); }}
+                />
               }
               keyExtractor={(item, index) => index.toString()}
             />
